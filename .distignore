@@ -49,3 +49,4 @@ languages/*.mo
 # GitHub-only files (never shipped to WordPress.org)
 /.wordpress-org
 /README.md
+/LICENSE
