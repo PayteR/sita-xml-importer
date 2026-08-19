@@ -1,0 +1,22 @@
+name: Deploy to WordPress.org
+
+# Pushing a version tag (e.g. 2.1.3) publishes that version to the
+# WordPress.org plugin directory: files go to SVN trunk and tags/<version>.
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+*'
+
+jobs:
+  deploy:
+    name: Release to WordPress.org
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and deploy to SVN
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: sita-xml-importer

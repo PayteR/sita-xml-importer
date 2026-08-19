@@ -1,0 +1,384 @@
+# Copyright (C) 2026 SITA
+# This file is distributed under the same license as the SITA XML Importer plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: SITA XML Importer 2.0.0\n"
+"Report-Msgid-Bugs-To: https://sita.sk\n"
+"POT-Creation-Date: 2026-07-09 04:00+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: includes/admin.php:45
+msgid "XML Feed URLs"
+msgstr ""
+
+#: includes/admin.php:47
+msgid "Enter one XML feed URL per line"
+msgstr ""
+
+#: includes/admin.php:51
+msgid "Import Frequency"
+msgstr ""
+
+#: includes/admin.php:54
+msgid ""
+"How often to check the feeds. With WP-Cron the actual timing depends on site "
+"traffic; for exact intervals, run WordPress cron from a system cron."
+msgstr ""
+
+#: includes/admin.php:56
+msgid "Every 15 minutes"
+msgstr ""
+
+#: includes/admin.php:57
+msgid "Every 30 minutes"
+msgstr ""
+
+#: includes/admin.php:58
+msgid "Hourly"
+msgstr ""
+
+#: includes/admin.php:63
+msgid "Post Author"
+msgstr ""
+
+#: includes/admin.php:65
+msgid "Which user should own imported posts?"
+msgstr ""
+
+#: includes/admin.php:70
+msgid "Post Type"
+msgstr ""
+
+#: includes/admin.php:72
+msgid "Which post type to use for imported articles?"
+msgstr ""
+
+#: includes/admin.php:78
+msgid "Post Status"
+msgstr ""
+
+#: includes/admin.php:80
+msgid "Default status for newly imported posts"
+msgstr ""
+
+#: includes/admin.php:83
+msgid "Publish"
+msgstr ""
+
+#: includes/admin.php:84
+msgid "Future"
+msgstr ""
+
+#: includes/admin.php:85
+msgid "Pending"
+msgstr ""
+
+#: includes/admin.php:90
+msgid "Category Saving"
+msgstr ""
+
+#: includes/admin.php:92
+msgid "Save full category tree or just the lowest level?"
+msgstr ""
+
+#: includes/admin.php:94
+msgid "Lowest category only"
+msgstr ""
+
+#: includes/admin.php:95
+msgid "Full category tree"
+msgstr ""
+
+#: includes/admin.php:100
+msgid "Allowed HTML Tags"
+msgstr ""
+
+#: includes/admin.php:103
+msgid "HTML tags to preserve in imported content (for strip_tags)"
+msgstr ""
+
+#: includes/admin.php:107
+msgid "Verbose Logging"
+msgstr ""
+
+#: includes/admin.php:109
+msgid "Store per-article detail (created/updated/skipped) in the run log"
+msgstr ""
+
+#: includes/admin.php:110
+msgid ""
+"Errors are always logged. Verbose mode also stores every processed article "
+"(much more data in the database); enable only for debugging."
+msgstr ""
+
+#: includes/admin.php:114
+msgid "Log Retention (days)"
+msgstr ""
+
+#: includes/admin.php:117
+msgid "Import log rows older than this are pruned automatically."
+msgstr ""
+
+#: includes/admin.php:247 includes/admin.php:248 includes/admin.php:323
+msgid "SITA XML Importer"
+msgstr ""
+
+#: includes/admin.php:285
+msgid "Settings"
+msgstr ""
+
+#: includes/admin.php:289 includes/admin.php:464
+msgid "Import log"
+msgstr ""
+
+#: includes/admin.php:293
+msgid "Maintenance"
+msgstr ""
+
+#: includes/admin.php:390
+msgid "Featured image repair"
+msgstr ""
+
+#: includes/admin.php:391
+msgid ""
+"Missing featured images are re-downloaded automatically after every import, "
+"using the image address stored with each article. This also fixes articles "
+"that have already scrolled out of the feed, so there is nothing to click "
+"here - the count below is for information only."
+msgstr ""
+
+#: includes/admin.php:396
+#, php-format
+msgid "Articles missing their featured image: %s."
+msgstr ""
+
+#: includes/admin.php:409
+msgid "Import started in the background. The result appears in the log below."
+msgstr ""
+
+#: includes/admin.php:410
+msgid "Import finished. See the log below."
+msgstr ""
+
+#: includes/admin.php:411
+msgid "Please wait - an import was triggered recently (cooldown active)."
+msgstr ""
+
+#: includes/admin.php:412
+msgid "An import is already running."
+msgstr ""
+
+#: includes/admin.php:435 includes/admin.php:447
+msgid "Import now"
+msgstr ""
+
+#: includes/admin.php:436
+msgid ""
+"Runs the importer immediately in the background (it does not block this "
+"page). Watch the status and the log below."
+msgstr ""
+
+#: includes/admin.php:441
+msgid "Overwrite existing articles"
+msgstr ""
+
+#: includes/admin.php:442
+msgid ""
+"Re-imports every article currently in the feed even if it has not changed - "
+"overwriting the title, content, excerpt and categories, and re-downloading a "
+"missing featured image. The publish date, author and status are kept. Use "
+"this to fix articles whose images did not download or that need refreshing "
+"from the source."
+msgstr ""
+
+#: includes/admin.php:453 includes/admin.php:617
+msgid "Status: import running…"
+msgstr ""
+
+#: includes/admin.php:454 includes/admin.php:616
+msgid "Status: idle"
+msgstr ""
+
+#: includes/admin.php:467
+msgid "No import runs recorded yet."
+msgstr ""
+
+#: includes/admin.php:473
+msgid "Started"
+msgstr ""
+
+#: includes/admin.php:474
+msgid "Type"
+msgstr ""
+
+#: includes/admin.php:475
+msgid "Status"
+msgstr ""
+
+#: includes/admin.php:476
+msgid "Created"
+msgstr ""
+
+#: includes/admin.php:477
+msgid "Updated"
+msgstr ""
+
+#: includes/admin.php:478
+msgid "Skipped"
+msgstr ""
+
+#: includes/admin.php:479 includes/admin.php:503
+msgid "Errors"
+msgstr ""
+
+#: includes/admin.php:480
+msgid "Details"
+msgstr ""
+
+#: includes/admin.php:501
+msgid "view"
+msgstr ""
+
+#: includes/admin.php:510
+msgid "Articles"
+msgstr ""
+
+#: includes/admin.php:545
+msgid "First page"
+msgstr ""
+
+#: includes/admin.php:550
+msgid "Previous page"
+msgstr ""
+
+#: includes/admin.php:558
+#, php-format
+msgid "%1$s of %2$s"
+msgstr ""
+
+#: includes/admin.php:571
+msgid "Next page"
+msgstr ""
+
+#: includes/admin.php:576
+msgid "Last page"
+msgstr ""
+
+#: includes/admin.php:585
+msgid "Export & diagnostics"
+msgstr ""
+
+#: includes/admin.php:588
+msgid "Export runs in a date range as CSV - opens in a spreadsheet."
+msgstr ""
+
+#: includes/admin.php:592
+msgid "From"
+msgstr ""
+
+#: includes/admin.php:593
+msgid "To"
+msgstr ""
+
+#: includes/admin.php:594
+msgid "Export CSV"
+msgstr ""
+
+#: includes/admin.php:598
+msgid ""
+"Download a Markdown diagnostic report: environment, database, schema, health "
+"checks and recent errors. Ideal for sending to a developer or a coding agent."
+msgstr ""
+
+#: includes/admin.php:602
+msgid "Export diagnostic report (.md)"
+msgstr ""
+
+#: includes/admin.php:618
+msgid ""
+"Import was queued but has not started - this site's background tasks (WP-"
+"Cron) may be blocked. Run it via WP-CLI or set up a real system cron."
+msgstr ""
+
+#: includes/admin.php:662
+#, php-format
+msgid "Available in %s"
+msgstr ""
+
+#: includes/admin.php:694 includes/admin.php:744 includes/diagnostics.php:217
+#: includes/legacy-migration.php:485 includes/legacy-migration.php:499
+msgid "Insufficient permissions."
+msgstr ""
+
+#: includes/legacy-migration.php:391
+msgid "Data migration started in the background."
+msgstr ""
+
+#: includes/legacy-migration.php:392
+msgid "Legacy meta cleanup ran. Repeat until nothing remains."
+msgstr ""
+
+#: includes/legacy-migration.php:425
+msgid "Legacy data migration"
+msgstr ""
+
+#: includes/legacy-migration.php:426
+msgid ""
+"Moves the old per-post tracking meta (_w_id, _w_t_p, _w_t_m) into the "
+"indexed article table. New imports already use the table; this backfills "
+"existing posts."
+msgstr ""
+
+#: includes/legacy-migration.php:431
+#, php-format
+msgid "Posts not yet migrated: %1$s. Legacy meta rows remaining: %2$s."
+msgstr ""
+
+#: includes/legacy-migration.php:444
+#, php-format
+msgid ""
+"The remaining legacy meta is kept as a backup and is deleted automatically "
+"around %s. You can also remove it now."
+msgstr ""
+
+#: includes/legacy-migration.php:448
+msgid ""
+"Automatic cleanup is disabled; remove the legacy meta manually when ready."
+msgstr ""
+
+#: includes/legacy-migration.php:455
+msgid "Run data migration now"
+msgstr ""
+
+#: includes/legacy-migration.php:458
+msgid "Delete legacy _w_* postmeta for migrated posts? This cannot be undone."
+msgstr ""
+
+#: includes/legacy-migration.php:462
+msgid "Delete legacy meta (cleanup)"
+msgstr ""
+
+#: includes/legacy-migration.php:477
+msgid ""
+"The old \"SITA XML parser\" plugin (sita-parser-xml) is still installed. It "
+"has been deactivated and is no longer needed. You can safely delete it from "
+"the Plugins screen."
+msgstr ""
+
+#: includes/legacy-migration.php:478
+msgid "Go to Plugins"
+msgstr ""
+
+#: sita-xml-importer.php:143
+msgid "Every 15 minutes (SITA XML Importer)"
+msgstr ""
+
+#: sita-xml-importer.php:144
+msgid "Every 30 minutes (SITA XML Importer)"
+msgstr ""

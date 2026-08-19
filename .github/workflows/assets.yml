@@ -1,0 +1,26 @@
+name: Update WordPress.org assets
+
+# Icon, banner and screenshots live in .wordpress-org/ and are published to the
+# SVN assets/ directory. They are NOT part of the downloadable plugin zip.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.wordpress-org/**'
+      - 'readme.txt'
+  workflow_dispatch:
+
+jobs:
+  assets:
+    name: Push assets and readme
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update assets
+        uses: 10up/action-wordpress-plugin-asset-update@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: sita-xml-importer

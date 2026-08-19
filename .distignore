@@ -1,0 +1,51 @@
+# Files and directories that must NOT be shipped in the WordPress.org
+# distribution (SVN trunk / the downloadable zip). Dev-only tooling and
+# VCS metadata only - everything the plugin needs at runtime must NOT be here.
+#
+# Honoured by the 10up "WordPress Plugin Deploy" GitHub Action and compatible
+# packaging tools.
+
+# Claude Code / AI tooling
+CLAUDE.md
+
+# Version control
+/.git
+/.gitignore
+/.gitattributes
+/.github
+/.distignore
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# Dependency / build artifacts (none used today, listed defensively)
+/node_modules
+/vendor
+composer.json
+composer.lock
+package.json
+package-lock.json
+
+# Tests / CI
+/tests
+/.wordpress-org
+phpunit.xml
+phpunit.xml.dist
+.phpcs.xml
+.phpcs.xml.dist
+
+# Screenshots live in the WordPress.org SVN /assets/ dir, not the plugin zip
+/screenshots
+
+# Compiled/translated language files are NOT shipped: WordPress.org generates
+# and delivers them from translate.wordpress.org for directory-hosted plugins.
+# The .pot template is kept so the source stays translatable offline.
+languages/*.po
+languages/*.mo
+
+# GitHub-only files (never shipped to WordPress.org)
+/.wordpress-org
+/README.md
