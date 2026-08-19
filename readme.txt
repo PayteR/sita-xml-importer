@@ -1,5 +1,5 @@
 === SITA XML Importer ===
-Contributors: payter
+Contributors: sitask, payter
 Tags: sita, xml, importer, news, feed
 Requires at least: 5.9
 Tested up to: 7.0
@@ -8,164 +8,118 @@ Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Import news articles from SITA (Slovak News Agency) XML feeds into WordPress.
+Automatický import spravodajských článkov z XML kanálov agentúry SITA do WordPressu.
 
 == Description ==
 
-SITA XML Importer automatically imports news articles from SITA (Slovak News Agency / Slovenská tlačová agentúra) XML feeds into your WordPress site. SITA publishes its news at sita.sk (formerly webnoviny.sk).
+Plugin automaticky sťahuje spravodajské články z XML kanálov agentúry SITA (Slovenská tlačová agentúra) a vytvára z nich príspevky vo vašom WordPresse - vrátane kategórií a titulných obrázkov. Import beží pravidelne na pozadí, k dispozícii je aj tlačidlo na okamžitý import a záznam o každom behu.
 
-**Active access to SITA's XML feeds is required to use this plugin.** The feeds are a service provided by SITA. To request access, contact SITA's sales team at obchod@sita.sk. For technical help, contact webmaster@sita.sk.
+= Potrebujete prístup ku kanálom SITA =
 
-It is the successor to the older "SITA XML parser správ" (sita-parser-xml) plugin. If you are upgrading from it, your settings and already-imported articles carry over automatically.
+**Plugin sám o sebe nemá čo importovať - potrebujete aktívny prístup k XML kanálom agentúry SITA.** Ide o platenú službu agentúry SITA.
 
-= Features =
+* **Záujem o prístup:** obchod@sita.sk
+* **Ďalšie kontakty:** https://biz.sita.sk/#kontakty
 
-* Automatic scheduled import via WordPress cron (every 30 minutes by default, configurable)
-* "Import now" button for an on-demand run in the background (with a cooldown)
-* Per-run import log (created / updated / skipped / errors) with CSV export
-* Creates posts with title, excerpt, content, and featured images
-* Automatic category creation from feed section/subsection data
-* Configurable post type, status, and author
-* HTML tag filtering for imported content
-* No duplicates - each article is imported once and only updated when it changes at the source
-* Reliable on shared hosting and with large feeds
-* Developer hooks for customization
+= Technické problémy a hlásenie chýb =
 
-= Import log & on-demand import =
+Zdrojový kód, dokumentáciu a hlásenie chýb nájdete na GitHube:
+https://github.com/PayteR/sita-xml-importer
 
-Every import is recorded in an activity log showing how many articles were created, updated or skipped, and any errors. You can export the log to CSV, and the "Import now" button runs an import immediately in the background without blocking the page - the result appears in the log when it finishes.
+Chybu alebo návrh nahláste cez GitHub Issues:
+https://github.com/PayteR/sita-xml-importer/issues
 
-= Expected XML Format =
+= Čo plugin vie =
 
-The plugin parses SITA's XML format. Each article is wrapped in a `<Sprava>` element containing:
+* Pravidelný automatický import (predvolene každých 30 minút, nastaviteľné)
+* Tlačidlo "Importovať teraz" pre okamžitý import na pozadí
+* Záznam o každom behu (vytvorené / aktualizované / preskočené / chyby) s exportom do CSV
+* Vytvára príspevky s nadpisom, perexom, obsahom a titulným obrázkom
+* Automatické vytváranie kategórií podľa rubrík z kanála
+* Nastaviteľný typ príspevku, stav a autor
+* Bez duplicít - článok sa importuje raz a aktualizuje sa len pri zmene v zdroji
+* Spoľahlivý aj na zdieľanom hostingu a pri veľkých kanáloch
+* Hooky pre vývojárov
 
-* `ID` - Article identifier
-* `UnikatneID` - Unique identifier
-* `DatumVydania` / `CasVydania` - Publish date/time
-* `DatumAktualizacie` / `CasAktualizacie` - Last modified date/time
-* `Nadpis` - Title
-* `Perex` - Excerpt
-* `TextContent` - Full article body (HTML)
-* `Sekcia > Rubrika` - Main category
-* `Sekcia > Podrubrika` - Subcategory
-* `Lokality > Lokalita` - Locations
-* `Obrazok > ObrazokLinka` - Featured image URL
-* `Obrazok > VelkostSuboru`, `ObrazokVyska`, `ObrazokSirka` - Image metadata
-
-Articles without a featured image (`ObrazokLinka`) are skipped.
-
-= Developer Hooks =
-
-**Actions:**
-
-* `sita_xml_importer_start` - Fires before import processing begins.
-* `sita_xml_importer_inserted` - Fires when a new post is created. Receives post ID.
-* `sita_xml_importer_end` - Fires after all articles are processed. Receives results array.
-
-**Filters:**
-
-* `sita_xml_importer_article` - Filter individual article data before processing. Return `false` to skip the article.
-* `sita_xml_importer_time_budget` - Seconds a single pass may spend saving before it yields and continues in a follow-up background pass. Receives `( $seconds, $php_limit )`.
-* `sita_xml_importer_max_passes` - Cap on back-to-back continuation passes (default 20).
-* `sita_xml_importer_log_max_rows` - Hard cap on retained log rows (default 20000).
-* `sita_xml_importer_manual_cooldown` - Seconds between allowed "Import now" runs (default 300).
-* `sita_xml_importer_migration_batch_size` - Posts migrated per background batch (default 2000).
-* `sita_xml_importer_cleanup_batch_size` - Legacy meta rows deleted per cleanup batch (default 5000).
-* `sita_xml_importer_cleanup_grace_days` - Days the migrated legacy meta is kept as a backup before it is deleted automatically (default 30; set to 0 to disable auto-cleanup and remove it manually only).
-
-= Data storage =
-
-Article tracking is stored in two custom tables (`{prefix}sita_xml_importer_article` and `{prefix}sita_xml_importer_log`) instead of post meta. The article table maps each SITA article to its WordPress post and is the duplicate-detection index. Installations upgrading from the legacy plugin keep their old `_w_id` / `_w_t_p` / `_w_t_m` post meta until you run the built-in migration (Settings > SITA XML Importer > Maintenance), which backfills the table in the background. The old meta is then kept as a backup and removed automatically after a grace period (30 days by default), or immediately via the Maintenance tab.
+Plugin je nástupcom staršieho pluginu "SITA XML parser správ" (sita-parser-xml). Pri prechode sa nastavenia aj už importované články prenesú automaticky.
 
 == External Services ==
 
-This plugin imports content from SITA (Slovak News Agency / Slovenská tlačová agentúra) XML feeds. It connects to external endpoints that **you** configure in the plugin settings. It does not connect to any service until you enter at least one feed URL.
+Tento plugin importuje obsah z XML kanálov agentúry SITA (Slovenská tlačová agentúra). Pripája sa na externé adresy, ktoré **si sami** nastavíte v nastaveniach pluginu. Kým nezadáte aspoň jednu adresu kanála, plugin sa nepripája nikam.
 
-**What it connects to and when:**
+**Na čo a kedy sa pripája:**
 
-* **SITA XML feed(s)** - On each scheduled run the plugin sends an HTTP GET request to every feed URL you enter under Settings > SITA XML Importer. The request carries only the URL you provided (which may include an access token issued to you by SITA); no data from your WordPress site is transmitted.
-* **Article images** - For each imported article that references an image, the plugin downloads that image from the image URL contained inside the feed and stores it in your Media Library.
+* **XML kanál(y) SITA** - pri každom naplánovanom behu plugin odošle HTTP GET požiadavku na každú adresu kanála, ktorú ste zadali v Nastavenia > SITA XML Importer. Požiadavka obsahuje iba vami zadanú adresu (tá môže obsahovať prístupový token vydaný agentúrou SITA); žiadne údaje z vášho WordPressu sa neodosielajú.
+* **Obrázky článkov** - pri každom importovanom článku, ktorý obsahuje obrázok, plugin stiahne tento obrázok z adresy uvedenej v kanáli a uloží ho do vašej knižnice médií.
 
-Access to SITA's XML feeds is a service provided by SITA. To request feed access, contact SITA's sales team at obchod@sita.sk. For technical support with the feeds or this plugin, contact webmaster@sita.sk.
+Prístup k XML kanálom SITA je služba poskytovaná agentúrou SITA. Záujem o prístup: obchod@sita.sk, ďalšie kontakty na https://biz.sita.sk/#kontakty.
 
-Service provider: SITA Slovenská tlačová agentúra a.s. - https://sita.sk (formerly webnoviny.sk)
-Terms of service and privacy policy: https://sita.sk
+Poskytovateľ služby: SITA Slovenská tlačová agentúra a.s. - https://sita.sk (predtým webnoviny.sk)
+Podmienky používania a ochrana súkromia: https://sita.sk
 
 == Installation ==
 
-1. Upload the `sita-xml-importer` folder to `/wp-content/plugins/`.
-2. Activate the plugin through the Plugins menu.
-3. Go to Settings > SITA XML Importer.
-4. Enter your SITA XML feed URL(s), one per line.
-5. Configure the post author, post type, status, and category options.
-6. Save settings - the importer runs automatically on a schedule (every 30 minutes by default).
+1. Nahrajte priečinok `sita-xml-importer` do `/wp-content/plugins/`, alebo plugin nainštalujte priamo z adresára pluginov WordPressu.
+2. Aktivujte plugin v menu Pluginy.
+3. Prejdite do Nastavenia > SITA XML Importer.
+4. Zadajte adresu (adresy) vášho XML kanála SITA, každú na samostatný riadok.
+5. Nastavte autora príspevkov, typ príspevku, stav a prácu s kategóriami.
+6. Uložte nastavenia - import odteraz beží automaticky (predvolene každých 30 minút).
 
-To obtain XML feed access, contact SITA's sales team at obchod@sita.sk. For technical support, contact webmaster@sita.sk.
+Prístup ku kanálom vybavíte na obchod@sita.sk, ďalšie kontakty nájdete na https://biz.sita.sk/#kontakty.
+
+Podrobná dokumentácia (formát XML, hooky pre vývojárov, ukladanie dát a migrácia):
+https://github.com/PayteR/sita-xml-importer/tree/main/docs
 
 == Frequently Asked Questions ==
 
-= Do I need anything from SITA to use this plugin? =
+= Potrebujem niečo od agentúry SITA? =
 
-Yes. You need active access to SITA's XML feeds - the plugin has nothing to import without it. To request access, contact SITA's sales team at obchod@sita.sk. For technical support with the feeds or the plugin, contact webmaster@sita.sk.
+Áno. Potrebujete aktívny prístup k XML kanálom SITA, inak plugin nemá čo importovať. Záujem o prístup: obchod@sita.sk, ďalšie kontakty na https://biz.sita.sk/#kontakty.
 
-= How often does the import run? =
+= Ako často import beží? =
 
-Every 30 minutes by default, configurable to 15 or 30 minutes or hourly under Settings > SITA XML Importer. Because WordPress cron (WP-Cron) is triggered by site visits, the actual timing depends on traffic: on a busy site it fires close to the chosen interval, on a quiet site it can lag until the next visit. For exact, traffic-independent timing, disable WP-Cron (`define('DISABLE_WP_CRON', true);`) and run WordPress cron from a real system cron / WP-CLI (which also has no PHP execution-time limit).
+Predvolene každých 30 minút, nastaviteľné na 15 minút, 30 minút alebo hodinu. Keďže WordPress cron (WP-Cron) spúšťajú návštevy stránky, reálne načasovanie závisí od návštevnosti. Presné a od návštevnosti nezávislé spúšťanie dosiahnete vypnutím WP-Cronu (`define('DISABLE_WP_CRON', true);`) a spúšťaním cronu zo systému.
 
-You can also click "Import now" on the settings screen for an on-demand background run, or trigger it from WP-CLI:
+= Kde nahlásim chybu alebo technický problém? =
 
-`wp cron event run sita_xml_importer_cron`
+Cez GitHub Issues: https://github.com/PayteR/sita-xml-importer/issues
 
-= Why does "Import now" not finish instantly? =
+= Prečo sa niektoré články neimportovali? =
 
-The importer runs in the background so it never blocks the admin page. The status line updates live and the result appears in the import log when the run finishes. Large first-time imports are processed in several automatic passes.
+Články bez titulného obrázka sa zámerne preskakujú. Podrobnosti nájdete v dokumentácii na GitHube.
 
-= I'm upgrading from the old sita-parser-xml plugin. What happens to my data? =
+= Prechádzam zo starého pluginu sita-parser-xml. Čo sa stane s dátami? =
 
-Your settings are migrated automatically on activation, and duplicate detection keeps working immediately (it reads the old post meta until migrated). Run the "Legacy data migration" once from the settings screen to move tracking data into the indexed tables; an optional cleanup then removes the old post meta.
-
-= Can I skip certain articles? =
-
-Yes, use the `sita_xml_importer_article` filter:
-
-`add_filter('sita_xml_importer_article', function($article) {
-    if (str_contains($article['title'], 'UNWANTED')) {
-        return false;
-    }
-    return $article;
-});`
-
-= Why are some articles not imported? =
-
-Articles without a featured image (`ObrazokLinka` element) are skipped by design.
+Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje okamžite. Na karte Údržba potom raz spustite migráciu údajov.
 
 == Screenshots ==
 
-1. Settings - configure your SITA feed URLs, import frequency, post author, status and category handling.
-2. Import log - the result of every run (created, updated, skipped, errors), with an "Import now" button and CSV export.
-3. Maintenance - one-click migration from the old sita-parser-xml plugin and automatic cleanup of legacy data.
+1. Nastavenia - adresy XML kanálov, frekvencia importu, autor, stav príspevkov a práca s kategóriami.
+2. Záznam importov - výsledok každého behu (vytvorené, aktualizované, preskočené, chyby), tlačidlo "Importovať teraz" a export do CSV.
+3. Údržba - migrácia zo starého pluginu sita-parser-xml a automatické čistenie starých údajov.
 
 == Changelog ==
 
 = 2.1.3 =
 
-An "Overwrite existing articles" re-import no longer rewrites an image's caption and credit when they already match the feed, so repeated overwrites of unchanged images do no extra database writes.
+Opakovaný import s voľbou "Prepísať existujúce články" už neprepisuje popis a zdroj obrázka, ak sa zhodujú s kanálom - opakované prepisy nezmenených obrázkov tak nerobia zbytočné zápisy do databázy.
 
 = 2.1.2 =
 
-Re-importing an article with "Overwrite existing articles" now also refreshes the featured image's caption and photo credit from the feed. Previously these were only set the first time an image was downloaded, so an overwrite left the old values in place.
+Opakovaný import s voľbou "Prepísať existujúce články" po novom aktualizuje aj popis a fotokredit titulného obrázka z kanála. Predtým sa nastavili len pri prvom stiahnutí obrázka.
 
 = 2.1.0 =
 
-Featured images now use the caption and photo credit from the feed when the SITA feed provides them (the `<ObrazokTitulok>` and `<ObrazokZdroj>` elements), instead of whatever caption is embedded in the image file's IPTC/EXIF metadata. Older feeds without these elements are unaffected.
+Titulné obrázky po novom používajú popis a fotokredit z kanála SITA (prvky `<ObrazokTitulok>` a `<ObrazokZdroj>`), ak ich kanál poskytuje, namiesto popisu z IPTC/EXIF metadát súboru. Staršie kanály bez týchto prvkov to neovplyvní.
 
 = 2.0.0 =
 
-First public release on WordPress.org. This is the successor to the older "SITA XML parser správ" (sita-parser-xml) plugin. Existing installations upgrade seamlessly: your settings and imported articles are carried over automatically, the old plugin is deactivated, and the Maintenance screen prompts you to remove it.
+Prvé verejné vydanie na WordPress.org. Nástupca staršieho pluginu "SITA XML parser správ" (sita-parser-xml). Existujúce inštalácie prejdú bez zásahu: nastavenia aj importované články sa prenesú, starý plugin sa deaktivuje.
 
-* Configurable import frequency (every 15 or 30 minutes, or hourly; default 30 minutes), plus an "Import now" button for an on-demand run.
-* Activity log of every import (created / updated / skipped / errors) with CSV export.
-* Downloadable diagnostic report to share with support when something needs looking at.
-* Reliable on shared hosting and with large feeds; a post is only updated when its source article changes.
-* Settings / Import log / Maintenance tabbed admin screen.
-* Slovak and Czech translations.
+* Nastaviteľná frekvencia importu (15 minút, 30 minút alebo hodina) a tlačidlo "Importovať teraz".
+* Záznam o každom importe (vytvorené / aktualizované / preskočené / chyby) s exportom do CSV.
+* Stiahnuteľná diagnostická správa pre podporu.
+* Spoľahlivosť na zdieľanom hostingu a pri veľkých kanáloch; príspevok sa aktualizuje len pri zmene v zdroji.
+* Prehľadné rozhranie s kartami Nastavenia / Záznam importov / Údržba.
+* Slovenský a český preklad.

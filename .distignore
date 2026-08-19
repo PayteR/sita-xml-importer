@@ -47,6 +47,7 @@ phpunit.xml.dist
 /.wordpress-org
 /README.md
 /LICENSE
+/docs
 
 # Compiled/translated language files are NOT shipped: WordPress.org generates
 # and delivers them from translate.wordpress.org for directory-hosted plugins.

@@ -1,36 +1,46 @@
 # SITA XML Importer
 
-Imports news articles from [SITA](https://sita.sk) (Slovenská tlačová agentúra / Slovak News
-Agency) XML feeds into WordPress. Creates posts with categories and featured images on a
-schedule, with an on-demand trigger and a per-run import log.
+Automatický import spravodajských článkov z XML kanálov agentúry **SITA** (Slovenská tlačová
+agentúra) do WordPressu. Plugin z kanála vytvára príspevky vrátane kategórií a titulných
+obrázkov, beží pravidelne na pozadí a o každom behu vedie záznam.
 
 **WordPress.org:** https://wordpress.org/plugins/sita-xml-importer/
 
-> Active access to SITA's XML feeds is required. To request access, contact SITA's sales team
-> at obchod@sita.sk. For technical support, webmaster@sita.sk.
+## Prístup ku kanálom SITA
 
-## Issues and contributions
+Plugin sám o sebe nemá čo importovať — potrebujete aktívny prístup k XML kanálom agentúry SITA,
+ktorý je platenou službou.
 
-Bug reports and feature requests are welcome — please [open an issue](../../issues).
+- **Záujem o prístup:** [obchod@sita.sk](mailto:obchod@sita.sk)
+- **Ďalšie kontakty:** https://biz.sita.sk/#kontakty
 
-Note that this repository is a **published mirror** of SITA's internal development repository.
-Code is pushed here automatically on release. Pull requests are read and appreciated, but they
-are ported into the internal repository by hand rather than merged directly, so please open an
-issue first for anything substantial.
+## Technické problémy
 
-## Releases
+Chybu alebo návrh na zlepšenie nahláste cez [GitHub Issues](../../issues).
 
-Releases are automated. Pushing a version tag (for example `2.1.3`) publishes that version to
-the WordPress.org plugin directory via the `10up/action-wordpress-plugin-deploy` action.
+Otázky k samotnému **prístupu ku kanálom, faktúram alebo obsahu** riešte cez kontakty vyššie —
+tie sa cez GitHub vybaviť nedajú.
 
-Files in `.wordpress-org/` (icon, banner, screenshots) are directory assets and are published
-separately — they are not part of the downloadable plugin.
+## Dokumentácia
 
-## Requirements
+| Téma | Dokument |
+|---|---|
+| Inštalácia a nastavenie | [docs/instalacia-a-nastavenie.md](docs/instalacia-a-nastavenie.md) |
+| Formát XML kanála | [docs/xml-format.md](docs/xml-format.md) |
+| Hooky pre vývojárov | [docs/hooks.md](docs/hooks.md) |
+| Ukladanie dát a migrácia | [docs/ukladanie-dat-a-migracia.md](docs/ukladanie-dat-a-migracia.md) |
+| Riešenie problémov (FAQ) | [docs/faq.md](docs/faq.md) |
 
-- WordPress 5.9 or newer
-- PHP 7.4 or newer
+## Požiadavky
 
-## License
+- WordPress 5.9 alebo novší
+- PHP 7.4 alebo novší
 
-GPL-2.0-or-later. See [LICENSE](LICENSE).
+## Príspevky do kódu
+
+Pull requesty radi prečítame, ale do vydania sa prenášajú ručne, nie priamym zlúčením. Pri
+väčších zmenách preto najprv založte [issue](../../issues), nech sa dohodneme na smerovaní.
+
+## Licencia
+
+GPL-2.0-or-later. Pozri [LICENSE](LICENSE).
