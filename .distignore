@@ -40,13 +40,16 @@ phpunit.xml.dist
 # Screenshots live in the WordPress.org SVN /assets/ dir, not the plugin zip
 /screenshots
 
+# GitHub-only files - never shipped to WordPress.org. LICENSE in particular must
+# stay out of trunk: the asset-update action aborts ("Other files have been
+# modified") if it finds unexpected changes in trunk. The plugin's licence is
+# already declared in the plugin header and readme.txt.
+/.wordpress-org
+/README.md
+/LICENSE
+
 # Compiled/translated language files are NOT shipped: WordPress.org generates
 # and delivers them from translate.wordpress.org for directory-hosted plugins.
 # The .pot template is kept so the source stays translatable offline.
 languages/*.po
 languages/*.mo
-
-# GitHub-only files (never shipped to WordPress.org)
-/.wordpress-org
-/README.md
-/LICENSE
