@@ -163,8 +163,10 @@ function sita_xml_importer_parse_feeds() {
     $allowable_tags = sita_xml_importer_get_option(
         'allowable_tags',
         SITA_XML_IMPORTER_OPTION,
-        '<a><strong><em><i><b><br><h1><h2><h3><h4><h5><table><tbody><thead><tfoot><tr><td><th><blockquote>'
+        Sita_Xml_Importer_Feed_Parser::DEFAULT_ALLOWABLE_TAGS
     );
+
+    $parser = new Sita_Xml_Importer_Feed_Parser( $allowable_tags );
 
     foreach ( $feeds as $feed_url ) {
         $response = wp_remote_get( $feed_url, [ 'timeout' => 30 ] );
@@ -196,54 +198,19 @@ function sita_xml_importer_parse_feeds() {
             continue;
         }
 
-        libxml_use_internal_errors( true );
-        $data       = simplexml_load_string( $body, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
-        $xml_errors = libxml_get_errors();
-        libxml_clear_errors();
+        // Parsing itself is WordPress-free and lives in the feed parser class -
+        // fetching, error reporting and everything downstream stays here.
+        $parsed = $parser->parse( $body );
 
-        if ( ! $data || ! isset( $data->Sprava ) ) {
-            $error_msg = ! empty( $xml_errors ) ? $xml_errors[0]->message : 'no <Sprava> elements found';
+        foreach ( $parser->get_errors() as $parse_error ) {
             sita_xml_importer_run_error(
-                'XML parse failed for ' . sita_xml_importer_redact_url( $feed_url ) . ': ' . trim( $error_msg ),
+                'XML parse failed for ' . sita_xml_importer_redact_url( $feed_url ) . ': ' . $parse_error,
                 [ 'url' => sita_xml_importer_redact_url( $feed_url ) ]
             );
-            continue;
         }
 
-        foreach ( $data->Sprava as $n ) {
-            $thumbnail_url = (string) $n->Obrazok->ObrazokLinka;
-
-            if ( empty( $thumbnail_url ) ) {
-                continue;
-            }
-
-            $articles[] = [
-                '_w_id'          => (string) $n->ID,
-                'u_id'           => (string) $n->UnikatneID,
-                'date_published' => (string) $n->DatumVydania,
-                'date_modified'  => (string) $n->DatumAktualizacie,
-                'time_publish'   => (string) $n->CasVydania,
-                'time_modified'  => (string) $n->CasAktualizacie,
-                'title'          => (string) $n->Nadpis,
-                'perex'          => (string) $n->Perex,
-                'section'        => [
-                    'category'     => (string) $n->Sekcia->Rubrika,
-                    'sub_category' => (string) $n->Sekcia->Podrubrika,
-                ],
-                'locations'      => (array) $n->Lokality->Lokalita,
-                'content'        => trim( strip_tags( (string) $n->TextContent, $allowable_tags ) ),
-                'thumbnail'      => [
-                    'url'    => sita_xml_importer_fix_thumbnail_url( $thumbnail_url ),
-                    'size'   => (string) $n->Obrazok->VelkostSuboru,
-                    'height' => (string) $n->Obrazok->ObrazokVyska,
-                    'width'  => (string) $n->Obrazok->ObrazokSirka,
-                    // Image caption + credit (SITA feed 2026-08+). null when the element is
-                    // absent (older feed) so the sideload step leaves the file's IPTC-derived
-                    // caption alone; a present-but-empty element ('') overrides that IPTC.
-                    'caption' => isset( $n->Obrazok->ObrazokTitulok ) ? trim( (string) $n->Obrazok->ObrazokTitulok ) : null,
-                    'source'  => isset( $n->Obrazok->ObrazokZdroj ) ? trim( (string) $n->Obrazok->ObrazokZdroj ) : null,
-                ],
-            ];
+        if ( $parsed ) {
+            $articles = array_merge( $articles, $parsed );
         }
     }
 
@@ -646,14 +613,13 @@ function sita_xml_importer_set_featured_image( $post_id, $attachment_id ) {
     }
 }
 
+/**
+ * Kept as a function because it is part of the public/legacy surface:
+ * `legacy-compat.php` exposes it as the old `sita_thumbnail_http_fix()`.
+ * The implementation itself lives in the (WordPress-free) parser class.
+ */
 function sita_xml_importer_fix_thumbnail_url( $url, $protocol = 'https://' ) {
-    // Prefix check only: a URL that merely contains "http://" in a query string
-    // is not absolute.
-    if ( stripos( $url, 'http://' ) !== 0 && stripos( $url, 'https://' ) !== 0 ) {
-        $url = $protocol . ltrim( $url, '/' );
-    }
-
-    return $url;
+    return Sita_Xml_Importer_Feed_Parser::normalize_image_url( $url, $protocol );
 }
 
 /**

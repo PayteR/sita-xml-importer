@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SITA XML Importer
  * Description: Import news articles from SITA (Slovak News Agency) XML feeds into WordPress. Automatically creates posts with categories and featured images on an hourly schedule, with an on-demand trigger and a per-run import log.
- * Version: 2.1.3
+ * Version: 2.1.4
  * Author: SITA
  * Author URI: https://sita.sk
  * License: GPL-2.0-or-later
@@ -15,13 +15,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SITA_XML_IMPORTER_VERSION', '2.1.3' );
+define( 'SITA_XML_IMPORTER_VERSION', '2.1.4' );
 define( 'SITA_XML_IMPORTER_DB_VERSION', '2.0.0' );
 define( 'SITA_XML_IMPORTER_DB_VERSION_OPT', 'sita_xml_importer_db_version' );
 define( 'SITA_XML_IMPORTER_OPTION', 'sita_xml_importer' );
 define( 'SITA_XML_IMPORTER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SITA_XML_IMPORTER_URL', plugin_dir_url( __FILE__ ) );
 
+// Framework-free feed parser - loaded first, functions.php depends on it.
+require_once SITA_XML_IMPORTER_PATH . 'includes/class-sita-xml-importer-feed-parser.php';
 require_once SITA_XML_IMPORTER_PATH . 'includes/functions.php';
 require_once SITA_XML_IMPORTER_PATH . 'includes/db.php';
 require_once SITA_XML_IMPORTER_PATH . 'includes/logger.php';
