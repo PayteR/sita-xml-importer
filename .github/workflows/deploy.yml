@@ -1,16 +1,41 @@
 name: Deploy to WordPress.org
 
-# Pushing a version tag (e.g. 2.1.3) publishes that version to the
+# Pushing a version tag (e.g. 2.1.4) publishes that version to the
 # WordPress.org plugin directory: files go to SVN trunk and tags/<version>.
+# Nothing is released unless the lint + test job passes first.
 on:
   push:
     tags:
       - '[0-9]+.[0-9]+*'
 
 jobs:
+  test:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      # A syntax error here would be a fatal on every site running the plugin.
+      - name: PHP syntax check
+        run: |
+          find . -name '*.php' -not -path './vendor/*' -print0 \
+            | xargs -0 -n1 -P4 php -l
+
+      - name: Parser smoke test
+        run: php tests/parser-smoke-test.php
+
   deploy:
     name: Release to WordPress.org
+    needs: test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
