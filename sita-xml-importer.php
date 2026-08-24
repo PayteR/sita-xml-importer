@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: SITA XML Importer
- * Description: Import news articles from SITA (Slovak News Agency) XML feeds into WordPress. Automatically creates posts with categories and featured images on an hourly schedule, with an on-demand trigger and a per-run import log.
+ * Description: Import news articles from SITA (Slovak News Agency) XML feeds into WordPress. Automatically creates posts with categories and featured images on a configurable schedule, with an on-demand trigger and a per-run import log.
  * Version: 2.1.4
  * Author: SITA
  * Author URI: https://sita.sk
