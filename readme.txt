@@ -4,7 +4,7 @@ Tags: sita, xml, importer, news, feed
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.4
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje o
 3. Údržba - migrácia zo starého pluginu sita-parser-xml a automatické čistenie starých údajov.
 
 == Changelog ==
+
+= 2.1.5 =
+
+Spracovanie XML kanála je po novom dostupné aj ako samostatná PHP knižnica bez závislostí (`sita/xml-feed-parser`) — pre odberateľov, ktorí nepoužívajú WordPress. Ide o ten istý kód, aký používa plugin. Vnútorne sa trieda presunula do menného priestoru; správanie importu sa nemení.
 
 = 2.1.4 =
 
