@@ -27,7 +27,7 @@ Spracovanie XML kanála je k dispozícii aj ako samostatná PHP knižnica bez z�
 ten istý kód, len bez WordPressu:
 
 ```bash
-composer require sita/xml-feed-parser
+composer require sitask/xml-feed-parser
 ```
 
 Prípadne stačí skopírovať jediný súbor:

@@ -33,7 +33,7 @@ https://github.com/PayteR/sita-xml-importer/issues
 
 Samotné spracovanie XML kanála je k dispozícii aj ako samostatná PHP knižnica bez závislostí - použiteľná v akomkoľvek PHP projekte, aj mimo WordPressu:
 
-* Composer: `composer require sita/xml-feed-parser`
+* Composer: `composer require sitask/xml-feed-parser`
 * Alebo stačí skopírovať jediný súbor: https://github.com/PayteR/sita-xml-feed-parser
 
 Ide o presne ten istý kód, aký používa tento plugin.
@@ -112,7 +112,7 @@ Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje o
 
 = 2.1.5 =
 
-Spracovanie XML kanála je po novom dostupné aj ako samostatná PHP knižnica bez závislostí (`sita/xml-feed-parser`) — pre odberateľov, ktorí nepoužívajú WordPress. Ide o ten istý kód, aký používa plugin. Vnútorne sa trieda presunula do menného priestoru; správanie importu sa nemení.
+Spracovanie XML kanála je po novom dostupné aj ako samostatná PHP knižnica bez závislostí (`sitask/xml-feed-parser`) — pre odberateľov, ktorí nepoužívajú WordPress. Ide o ten istý kód, aký používa plugin. Vnútorne sa trieda presunula do menného priestoru; správanie importu sa nemení.
 
 = 2.1.4 =
 

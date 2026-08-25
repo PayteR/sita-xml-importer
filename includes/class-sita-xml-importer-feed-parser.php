@@ -7,7 +7,7 @@
  * returns plain arrays.
  *
  * THIS FILE IS MIRRORED. The identical file is published as the standalone
- * Composer package `sita/xml-feed-parser` (src/FeedParser.php) for SITA
+ * Composer package `sitask/xml-feed-parser` (src/FeedParser.php) for SITA
  * subscribers who do not use WordPress. The release pipeline copies it there and
  * strips only the ABSPATH guard below. Keep it dependency-free and keep the
  * public API stable — other people's code depends on it.
