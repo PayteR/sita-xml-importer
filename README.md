@@ -21,6 +21,18 @@ Chybu alebo návrh na zlepšenie nahláste cez [GitHub Issues](../../issues).
 Otázky k samotnému **prístupu ku kanálom, faktúram alebo obsahu** riešte cez kontakty vyššie —
 tie sa cez GitHub vybaviť nedajú.
 
+## Nepoužívate WordPress?
+
+Spracovanie XML kanála je k dispozícii aj ako samostatná PHP knižnica bez závislostí —
+ten istý kód, len bez WordPressu:
+
+```bash
+composer require sita/xml-feed-parser
+```
+
+Prípadne stačí skopírovať jediný súbor:
+**[PayteR/sita-xml-feed-parser](https://github.com/PayteR/sita-xml-feed-parser)**
+
 ## Dokumentácia
 
 | Téma | Dokument |

@@ -2,6 +2,11 @@
 
 Plugin spracúva XML formát agentúry SITA. Každý článok je zabalený v prvku `<Sprava>`.
 
+> **Spracovanie mimo WordPressu.** Parser je k dispozícii aj ako samostatná PHP knižnica
+> bez závislostí — `composer require sita/xml-feed-parser`, prípadne stačí skopírovať
+> jediný súbor z [PayteR/sita-xml-feed-parser](https://github.com/PayteR/sita-xml-feed-parser).
+> Nemusíte teda formát nižšie implementovať znova.
+
 ## Prvky článku
 
 | Prvok | Význam |

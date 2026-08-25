@@ -4,19 +4,26 @@
  *
  * DELIBERATELY FRAMEWORK-FREE. This class must never call WordPress functions,
  * touch globals, perform HTTP requests or do any I/O. It takes an XML string and
- * returns plain arrays. That keeps it unit-testable without WordPress, and means
- * it can be lifted into a standalone Composer package (for SITA subscribers who
- * are not on WordPress) by adding a namespace and nothing else.
+ * returns plain arrays.
  *
- * Everything WordPress-specific - fetching the feed, deduplication, creating
- * posts, sideloading images - lives in functions.php and stays there.
+ * THIS FILE IS MIRRORED. The identical file is published as the standalone
+ * Composer package `sita/xml-feed-parser` (src/FeedParser.php) for SITA
+ * subscribers who do not use WordPress. The release pipeline copies it there and
+ * strips only the ABSPATH guard below. Keep it dependency-free and keep the
+ * public API stable — other people's code depends on it.
+ *
+ * Everything WordPress-specific — fetching the feed, deduplication, creating
+ * posts, sideloading images — lives in functions.php and stays there.
  *
  * @package sita-xml-importer
+ * @see https://github.com/PayteR/sita-xml-feed-parser
  */
+
+namespace Sita\XmlFeed;
 
 defined( 'ABSPATH' ) || exit;
 
-final class Sita_Xml_Importer_Feed_Parser {
+final class FeedParser {
 
 	/**
 	 * HTML kept in article bodies when the caller does not specify its own list.
@@ -45,7 +52,7 @@ final class Sita_Xml_Importer_Feed_Parser {
 	/**
 	 * Parse one feed document into normalised article arrays.
 	 *
-	 * Articles with no image URL are skipped by design - the importer requires a
+	 * Articles with no image URL are skipped by design — the importer requires a
 	 * featured image. On a malformed document this returns an empty array and
 	 * records why in get_errors(); it never throws, so one bad feed cannot abort
 	 * a run over several feeds.
@@ -64,8 +71,8 @@ final class Sita_Xml_Importer_Feed_Parser {
 
 		// LIBXML_NONET blocks external entity fetches (XXE); NOCDATA folds CDATA
 		// sections into plain strings so TextContent behaves like the other nodes.
-		$previous = libxml_use_internal_errors( true );
-		$data     = simplexml_load_string( $xml, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
+		$previous   = libxml_use_internal_errors( true );
+		$data       = simplexml_load_string( $xml, 'SimpleXMLElement', LIBXML_NONET | LIBXML_NOCDATA );
 		$xml_errors = libxml_get_errors();
 		libxml_clear_errors();
 		libxml_use_internal_errors( $previous );
@@ -91,13 +98,13 @@ final class Sita_Xml_Importer_Feed_Parser {
 	/**
 	 * Map a single <Sprava> element. Returns null when the article must be skipped.
 	 *
-	 * @param SimpleXMLElement $n
+	 * @param \SimpleXMLElement $n
 	 * @return array<string,mixed>|null
 	 */
 	private function map_article( $n ) {
 		$thumbnail_url = (string) $n->Obrazok->ObrazokLinka;
 
-		// No image, no import - the importer requires a featured image.
+		// No image, no import — the importer requires a featured image.
 		if ( '' === $thumbnail_url ) {
 			return null;
 		}

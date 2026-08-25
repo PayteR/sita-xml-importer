@@ -163,10 +163,10 @@ function sita_xml_importer_parse_feeds() {
     $allowable_tags = sita_xml_importer_get_option(
         'allowable_tags',
         SITA_XML_IMPORTER_OPTION,
-        Sita_Xml_Importer_Feed_Parser::DEFAULT_ALLOWABLE_TAGS
+        \Sita\XmlFeed\FeedParser::DEFAULT_ALLOWABLE_TAGS
     );
 
-    $parser = new Sita_Xml_Importer_Feed_Parser( $allowable_tags );
+    $parser = new \Sita\XmlFeed\FeedParser( $allowable_tags );
 
     foreach ( $feeds as $feed_url ) {
         $response = wp_remote_get( $feed_url, [ 'timeout' => 30 ] );
@@ -619,7 +619,7 @@ function sita_xml_importer_set_featured_image( $post_id, $attachment_id ) {
  * The implementation itself lives in the (WordPress-free) parser class.
  */
 function sita_xml_importer_fix_thumbnail_url( $url, $protocol = 'https://' ) {
-    return Sita_Xml_Importer_Feed_Parser::normalize_image_url( $url, $protocol );
+    return \Sita\XmlFeed\FeedParser::normalize_image_url( $url, $protocol );
 }
 
 /**

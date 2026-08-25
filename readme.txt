@@ -29,6 +29,15 @@ https://github.com/PayteR/sita-xml-importer
 Chybu alebo návrh nahláste cez GitHub Issues:
 https://github.com/PayteR/sita-xml-importer/issues
 
+= Nepoužívate WordPress? =
+
+Samotné spracovanie XML kanála je k dispozícii aj ako samostatná PHP knižnica bez závislostí - použiteľná v akomkoľvek PHP projekte, aj mimo WordPressu:
+
+* Composer: `composer require sita/xml-feed-parser`
+* Alebo stačí skopírovať jediný súbor: https://github.com/PayteR/sita-xml-feed-parser
+
+Ide o presne ten istý kód, aký používa tento plugin.
+
 = Čo plugin vie =
 
 * Pravidelný automatický import (predvolene každých 30 minút, nastaviteľné)

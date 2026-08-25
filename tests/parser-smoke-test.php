@@ -1,6 +1,6 @@
 <?php
 /**
- * Standalone smoke test for Sita_Xml_Importer_Feed_Parser.
+ * Standalone smoke test for \Sita\XmlFeed\FeedParser.
  *
  * No PHPUnit, no WordPress, no database - which is the whole point of having
  * split the parser out. Run it from the plugin root:
@@ -78,7 +78,7 @@ $xml = <<<XML
 XML;
 
 echo "Parsing a normal feed\n";
-$parser   = new Sita_Xml_Importer_Feed_Parser();
+$parser   = new \Sita\XmlFeed\FeedParser();
 $articles = $parser->parse( $xml );
 
 check( 'articles without an image are skipped', count( $articles ), 2 );
@@ -111,28 +111,28 @@ check( 'missing caption element yields null', $old['thumbnail']['caption'], null
 check( 'missing credit element yields null', $old['thumbnail']['source'], null );
 
 echo "\nCustom allow-list\n";
-$strict = new Sita_Xml_Importer_Feed_Parser( '<em>' );
+$strict = new \Sita\XmlFeed\FeedParser( '<em>' );
 $out    = $strict->parse( $xml );
 check( 'strong stripped when not allowed', $out[0]['content'], 'Odsektucneevil()' );
 
 echo "\nMalformed input\n";
-$broken = new Sita_Xml_Importer_Feed_Parser();
+$broken = new \Sita\XmlFeed\FeedParser();
 check( 'broken xml returns no articles', $broken->parse( '<Spravy><Sprava>' ), [] );
 check( 'broken xml records an error', count( $broken->get_errors() ) > 0, true );
 
-$empty = new Sita_Xml_Importer_Feed_Parser();
+$empty = new \Sita\XmlFeed\FeedParser();
 check( 'empty body returns no articles', $empty->parse( '' ), [] );
 check( 'empty body records an error', $empty->get_errors(), [ 'empty response body' ] );
 
-$nosprava = new Sita_Xml_Importer_Feed_Parser();
+$nosprava = new \Sita\XmlFeed\FeedParser();
 $nosprava->parse( '<Spravy></Spravy>' );
 check( 'valid xml with no articles is reported', $nosprava->get_errors(), [ 'no <Sprava> elements found' ] );
 
 echo "\nURL normalisation\n";
-check( 'bare host', Sita_Xml_Importer_Feed_Parser::normalize_image_url( 'img.sita.sk/a.jpg' ), 'https://img.sita.sk/a.jpg' );
-check( 'http left alone', Sita_Xml_Importer_Feed_Parser::normalize_image_url( 'http://img.sita.sk/a.jpg' ), 'http://img.sita.sk/a.jpg' );
+check( 'bare host', \Sita\XmlFeed\FeedParser::normalize_image_url( 'img.sita.sk/a.jpg' ), 'https://img.sita.sk/a.jpg' );
+check( 'http left alone', \Sita\XmlFeed\FeedParser::normalize_image_url( 'http://img.sita.sk/a.jpg' ), 'http://img.sita.sk/a.jpg' );
 // A URL that merely *contains* http:// in a query string is not absolute.
-check( 'http inside query string is not absolute', Sita_Xml_Importer_Feed_Parser::normalize_image_url( '/r?u=http://x.sk/a.jpg' ), 'https://r?u=http://x.sk/a.jpg' );
+check( 'http inside query string is not absolute', \Sita\XmlFeed\FeedParser::normalize_image_url( '/r?u=http://x.sk/a.jpg' ), 'https://r?u=http://x.sk/a.jpg' );
 
 echo "\n" . ( $failures ? "FAILED: $failures of $checks checks\n" : "PASSED: all $checks checks\n" );
 exit( $failures ? 1 : 0 );
