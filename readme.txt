@@ -4,7 +4,7 @@ Tags: sita, xml, importer, news, feed
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.5
+Stable tag: 2.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje o
 3. Údržba - migrácia zo starého pluginu sita-parser-xml a automatické čistenie starých údajov.
 
 == Changelog ==
+
+= 2.1.6 =
+
+Oprava názvu Composer balíka v dokumentácii: správne je `sitask/xml-feed-parser`. Vo verzii 2.1.5 bol uvedený názov, ktorý na Packagiste nebolo možné použiť. Funkčnosť pluginu sa nemení.
 
 = 2.1.5 =
 
