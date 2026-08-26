@@ -8,7 +8,9 @@ on:
       - main
     paths:
       - '.wordpress-org/**'
-      - 'readme.txt'
+      # 'readme.txt' tu zamerne nie je: pri vydani sa meni spolu s kodom a
+      # asset-update vtedy nasadenie odmietne. Readme publikuje deploy.yml
+      # spolu s verziou; pre readme-only zmenu spusti workflow rucne.
   workflow_dispatch:
 
 jobs:
