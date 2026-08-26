@@ -4,7 +4,7 @@ Tags: sita, xml, importer, news, feed
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.7
+Stable tag: 2.1.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,9 @@ Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje o
 
 == Upgrade Notice ==
 
+= 2.1.8 =
+Oprava sťahovania titulných obrázkov vo formáte WebP a AVIF. Odporúčaná aktualizácia pre každého, komu sa niektoré obrázky neimportovali.
+
 = 2.1.7 =
 Voliteľné príkazy pre WP-CLI a doplnené podklady pre prekladateľov. Správanie importu sa nemení, aktualizácia nevyžaduje žiadny zásah.
 
@@ -124,6 +127,16 @@ Spracovanie XML kanála je po novom dostupné aj ako samostatná PHP knižnica p
 Titulné obrázky preberajú popis a fotokredit priamo z kanála SITA, ak ich kanál poskytuje.
 
 == Changelog ==
+
+= 2.1.8 =
+
+Oprava sťahovania titulných obrázkov vo formáte WebP a AVIF. Na niektorých weboch sa takýto obrázok neuložil a v zázname sa objavila hláška "Sorry, you are not allowed to upload this file type" - týkalo sa to najmä webov s CDN a sieťových inštalácií (multisite). Obrázky sa teraz importujú správne, a to aj v prípade, že adresa v kanáli nezodpovedá skutočnému formátu súboru - plugin príponu podľa obsahu opraví sám.
+
+V sieťových inštaláciách (multisite) plugin zároveň doplní WebP a AVIF medzi povolené typy súborov, ak tam chýbajú - aby tieto obrázky mohli nahrávať aj redaktori ručne. Deje sa tak len pri aktivácii alebo aktualizácii superadminom a pridávajú sa výhradne formáty, ktoré WordPress sám podporuje.
+
+Ak sa neúspech predsa objaví, záznam po novom uvádza aj zistený formát súboru, takže je z neho zrejmá príčina. Obrázok, ktorý WordPress odmietol, sa už neskúša sťahovať pri každom behu dookola; zopakuje sa pri oprave titulných obrázkov alebo pri importe s voľbou "Prepísať existujúce články".
+
+Popis nových filtrov pre vývojárov nájdete v dokumentácii na GitHube.
 
 = 2.1.7 =
 

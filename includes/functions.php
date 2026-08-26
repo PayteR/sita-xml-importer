@@ -418,7 +418,10 @@ function sita_xml_importer_process_save( $articles = [], $force = false ) {
             $post_id,
             $image_url,
             $article['thumbnail']['caption'] ?? null,
-            $article['thumbnail']['source'] ?? null
+            $article['thumbnail']['source'] ?? null,
+            // "Overwrite existing articles" is an explicit user request to redo the
+            // work, so it retries images previously rejected as well.
+            (bool) $force
         ) : 0;
 
         sita_xml_importer_article_upsert(
@@ -509,7 +512,7 @@ function sita_xml_importer_assign_categories( $post_id, $section, $lowest_only =
  *
  * @return int Attachment id (0 on failure).
  */
-function sita_xml_importer_handle_thumbnail( $post_id, $image_url, $caption = null, $source = null ) {
+function sita_xml_importer_handle_thumbnail( $post_id, $image_url, $caption = null, $source = null, $retry_failed = false ) {
     $attachment_id = sita_xml_importer_find_attachment_by_image_url( $image_url );
 
     // The reusable attachment may be gone: an editor deleted the image (e.g. to
@@ -521,6 +524,14 @@ function sita_xml_importer_handle_thumbnail( $post_id, $image_url, $caption = nu
     }
 
     if ( ! $attachment_id ) {
+        // This exact URL was already rejected by WordPress as an unacceptable file
+        // type. That does not fix itself, so re-downloading it every 30 minutes only
+        // burns bandwidth and fills the log. Transient failures (timeouts, 5xx) are
+        // NOT marked and keep retrying.
+        if ( ! $retry_failed && sita_xml_importer_image_permanently_failed( $post_id, $image_url ) ) {
+            return 0;
+        }
+
         // SSRF guard: image URLs come from remote feed content. Reject non-HTTP
         // schemes and hosts that resolve to private/reserved IPs before fetching.
         if ( ! wp_http_validate_url( $image_url ) ) {
@@ -545,23 +556,86 @@ function sita_xml_importer_handle_thumbnail( $post_id, $image_url, $caption = nu
         // Drop any query string so the extension is detected correctly on sideload.
         $clean_name = strtok( basename( $image_url ), '?' );
 
+        // WordPress rejects a file whose extension disagrees with its actual content,
+        // and the feed's URL is not authoritative about either: a CDN may still return
+        // a different format despite the Accept header, or the feed may simply name the
+        // file wrong. Trust the bytes over the URL and rename to match.
+        $file_name = sita_xml_importer_filename_for_content( $post_id . '_' . sanitize_file_name( $clean_name ), $tmp_file );
+
         $file_array = [
-            'name'     => $post_id . '_' . sanitize_file_name( $clean_name ),
+            'name'     => $file_name,
             'tmp_name' => $tmp_file,
         ];
 
-        $attachment_id = media_handle_sideload( $file_array, $post_id );
+        // On multisite, allowed mimes are intersected with the network-wide
+        // `upload_filetypes` option, whose default (jpg jpeg png gif) predates core's
+        // WebP (5.8) and AVIF (6.5) support. A genuine WebP is then rejected with the
+        // same generic error. Re-add only formats core already supports, only for the
+        // duration of this sideload of a file fetched from the configured feed.
+        $relax     = apply_filters( 'sita_xml_importer_relax_upload_mimes', true );
+        $allow     = null;
+
+        if ( $relax ) {
+            $allow = static function ( $mimes ) {
+                $core = wp_get_mime_types();
+                foreach ( [ 'webp' => 'image/webp', 'avif' => 'image/avif' ] as $ext => $mime ) {
+                    if ( isset( $core[ $ext ] ) && ! isset( $mimes[ $ext ] ) ) {
+                        $mimes[ $ext ] = $mime;
+                    }
+                }
+                return $mimes;
+            };
+
+            add_filter( 'upload_mimes', $allow, 99 );
+        }
+
+        try {
+            $attachment_id = media_handle_sideload( $file_array, $post_id );
+        } finally {
+            if ( $allow ) {
+                remove_filter( 'upload_mimes', $allow, 99 );
+            }
+        }
 
         if ( is_wp_error( $attachment_id ) ) {
+            // "Sorry, you are not allowed to upload this file type" on its own does not
+            // say whether the cause was a CDN format mismatch, the network option, or a
+            // third-party filter. Log what was actually detected so the log alone is
+            // enough to tell them apart.
+            $check = wp_check_filetype_and_ext( $tmp_file, $file_array['name'] );
+            $real  = function_exists( 'wp_get_image_mime' ) ? wp_get_image_mime( $tmp_file ) : '';
+
             sita_xml_importer_run_error(
-                'Attachment failed for post ' . $post_id . ': ' . $attachment_id->get_error_message(),
+                sprintf(
+                    'Attachment failed for post %d: %s (file=%s detected_ext=%s detected_type=%s real_mime=%s%s)',
+                    $post_id,
+                    $attachment_id->get_error_message(),
+                    $file_array['name'],
+                    $check['ext'] ? $check['ext'] : 'none',
+                    $check['type'] ? $check['type'] : 'none',
+                    $real ? $real : 'unknown',
+                    is_multisite()
+                        ? ' network_upload_filetypes=' . get_site_option( 'upload_filetypes', '' )
+                        : ''
+                ),
                 [ 'url' => $image_url ]
             );
+
+            // A rejected file type is a permanent failure for this URL: without this
+            // the importer re-downloads and re-fails the same image on every run,
+            // forever. Remembered per URL, so a changed image in the feed is retried,
+            // and cleared by the manual repair / "overwrite existing" paths.
+            sita_xml_importer_mark_image_permanently_failed( $post_id, $image_url );
+
             if ( file_exists( $tmp_file ) ) {
                 wp_delete_file( $tmp_file );
             }
             return 0;
         }
+
+        // Success after an earlier permanent failure (e.g. the admin fixed the network
+        // option): drop the marker so nothing keeps skipping this post.
+        delete_post_meta( $post_id, SITA_XML_IMPORTER_IMAGE_FAILED_META );
     }
 
     if ( $attachment_id ) {
@@ -627,9 +701,47 @@ function sita_xml_importer_fix_thumbnail_url( $url, $protocol = 'https://' ) {
  * burn the time budget. A 200 response with an empty body counts as a failure.
  */
 function sita_xml_importer_download_image( $url, $retries = 2 ) {
-    // Bounded timeout: download_url defaults to 300s - long enough for one slow
-    // or hung image to stall an entire run on shared hosts.
-    $image = download_url( $url, 30 );
+    // WordPress sends no Accept header on download_url(), and CDNs that do content
+    // negotiation pick the response format from it. With none sent, a .webp URL can
+    // legitimately come back as JPEG bytes - and the sideload then rejects the file
+    // because the extension and the real mime disagree ("Sorry, you are not allowed
+    // to upload this file type").
+    //
+    // Scoped to this one request rather than filtering by hostname: the plugin cannot
+    // know a user's CDN hosts, and a global http_request_args filter would affect
+    // every HTTP call on the site. Return false from the filter to disable it.
+    $accept = apply_filters(
+        'sita_xml_importer_image_accept_header',
+        'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+        $url
+    );
+
+    $add_header = null;
+
+    if ( $accept ) {
+        $add_header = static function ( $args, $request_url ) use ( $url, $accept ) {
+            // This fetch only. A redirect to a different URL drops the header, which
+            // is fine - the negotiation already happened on the original request.
+            if ( $request_url === $url ) {
+                $args['headers']['Accept'] = $accept;
+            }
+            return $args;
+        };
+
+        add_filter( 'http_request_args', $add_header, 10, 2 );
+    }
+
+    try {
+        // Bounded timeout: download_url defaults to 300s - long enough for one slow
+        // or hung image to stall an entire run on shared hosts.
+        $image = download_url( $url, 30 );
+    } finally {
+        // finally, not a plain call after: this function recurses on retry, so an
+        // exception or early return must never leave the filter attached.
+        if ( $add_header ) {
+            remove_filter( 'http_request_args', $add_header, 10 );
+        }
+    }
 
     if ( ! is_wp_error( $image ) && is_string( $image ) && ( ! is_file( $image ) || filesize( $image ) < 512 ) ) {
         if ( is_string( $image ) && file_exists( $image ) ) {
@@ -644,6 +756,93 @@ function sita_xml_importer_download_image( $url, $retries = 2 ) {
     }
 
     return $image;
+}
+
+/**
+ * Give a downloaded file an extension that matches what it actually contains.
+ *
+ * WordPress compares the filename extension against the file's real mime type and
+ * refuses the upload when they disagree - reporting only the generic "Sorry, you are
+ * not allowed to upload this file type". The mismatch is easy to hit here because the
+ * name comes from the feed URL while the bytes come from whatever the server chose to
+ * send: a CDN doing content negotiation may answer a .webp URL with JPEG, and feeds
+ * sometimes name files wrong outright.
+ *
+ * The file itself is the only reliable source, so the extension follows it. Untouched
+ * when the extension is already valid for the content, or when the type cannot be
+ * determined (leaving WordPress to make its own call, as before).
+ *
+ * @param string $file_name Proposed name, e.g. "123_photo-676x447.webp".
+ * @param string $tmp_file  Path to the downloaded file.
+ * @return string Name whose extension matches the content.
+ */
+function sita_xml_importer_filename_for_content( $file_name, $tmp_file ) {
+    if ( ! function_exists( 'wp_get_image_mime' ) || ! is_file( $tmp_file ) ) {
+        return $file_name;
+    }
+
+    $real_mime = wp_get_image_mime( $tmp_file );
+
+    // Not an image, or an image type this PHP build cannot identify: leave it alone
+    // rather than guess. Non-images have no business here anyway and the sideload
+    // will reject them, which is the correct outcome.
+    if ( ! $real_mime ) {
+        return $file_name;
+    }
+
+    $current_ext = strtolower( (string) pathinfo( $file_name, PATHINFO_EXTENSION ) );
+
+    foreach ( wp_get_mime_types() as $exts => $mime ) {
+        if ( $mime !== $real_mime ) {
+            continue;
+        }
+
+        // Keys look like "jpg|jpeg|jpe": any of them is a legitimate spelling.
+        $valid = explode( '|', $exts );
+
+        if ( in_array( $current_ext, $valid, true ) ) {
+            return $file_name;
+        }
+
+        $base = pathinfo( $file_name, PATHINFO_FILENAME );
+
+        return ( '' !== $base ? $base : 'image' ) . '.' . $valid[0];
+    }
+
+    // Core does not know this mime type; nothing sensible to rename to.
+    return $file_name;
+}
+
+/* -------------------------------------------------------------------------
+ * Permanently failed images
+ *
+ * A file WordPress refuses to accept will be refused again on the next run. The
+ * marker records the exact URL, so a different image in the feed is still tried,
+ * and it is cleared whenever the image finally succeeds or the user asks for a
+ * repair/overwrite pass.
+ * ---------------------------------------------------------------------- */
+
+/**
+ * Has this exact image URL already been rejected on sideload for this post?
+ *
+ * @param int    $post_id
+ * @param string $image_url
+ * @return bool
+ */
+function sita_xml_importer_image_permanently_failed( $post_id, $image_url ) {
+    $failed = get_post_meta( (int) $post_id, SITA_XML_IMPORTER_IMAGE_FAILED_META, true );
+
+    return is_string( $failed ) && '' !== $failed && $failed === (string) $image_url;
+}
+
+/**
+ * Remember that WordPress rejected this image, so the next run skips it.
+ *
+ * @param int    $post_id
+ * @param string $image_url
+ */
+function sita_xml_importer_mark_image_permanently_failed( $post_id, $image_url ) {
+    update_post_meta( (int) $post_id, SITA_XML_IMPORTER_IMAGE_FAILED_META, (string) $image_url );
 }
 
 /* -------------------------------------------------------------------------
@@ -695,7 +894,10 @@ function sita_xml_importer_repair_missing_images( $limit = 50 ) {
         }
 
         $did++;
-        $attachment_id = sita_xml_importer_handle_thumbnail( $post_id, $image_url );
+        // Repair is the user-driven "try again" path, so it deliberately ignores the
+        // permanent-failure marker: if the admin has since fixed the network option
+        // or the CDN, this is how the image gets picked up.
+        $attachment_id = sita_xml_importer_handle_thumbnail( $post_id, $image_url, null, null, true );
 
         if ( $attachment_id ) {
             sita_xml_importer_article_upsert( $sita_id, [

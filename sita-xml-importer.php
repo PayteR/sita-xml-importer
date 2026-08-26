@@ -2,7 +2,7 @@
 /**
  * Plugin Name: SITA XML Importer
  * Description: Import news articles from SITA (Slovak News Agency) XML feeds into WordPress. Automatically creates posts with categories and featured images on a configurable schedule, with an on-demand trigger and a per-run import log.
- * Version: 2.1.7
+ * Version: 2.1.8
  * Author: SITA
  * Author URI: https://sita.sk
  * License: GPL-2.0-or-later
@@ -15,10 +15,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SITA_XML_IMPORTER_VERSION', '2.1.7' );
+define( 'SITA_XML_IMPORTER_VERSION', '2.1.8' );
 define( 'SITA_XML_IMPORTER_DB_VERSION', '2.0.0' );
 define( 'SITA_XML_IMPORTER_DB_VERSION_OPT', 'sita_xml_importer_db_version' );
 define( 'SITA_XML_IMPORTER_OPTION', 'sita_xml_importer' );
+// Post meta holding an image URL WordPress refused on sideload, so the importer
+// stops re-downloading a file that will be rejected again.
+define( 'SITA_XML_IMPORTER_IMAGE_FAILED_META', '_sita_xml_importer_image_failed' );
 define( 'SITA_XML_IMPORTER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SITA_XML_IMPORTER_URL', plugin_dir_url( __FILE__ ) );
 
@@ -64,6 +67,10 @@ function sita_xml_importer_maybe_upgrade() {
     update_option( 'sita_xml_importer_version', SITA_XML_IMPORTER_VERSION );
     sita_xml_importer_reschedule();
 
+    // Also on upgrade: sites that already have the plugin never fire the activation
+    // hook again, so without this the WebP/AVIF fix would only reach new installs.
+    sita_xml_importer_maybe_allow_modern_image_uploads();
+
     /**
      * Fires after an in-place upgrade. The removable legacy module hooks this
      * to start the data migration. No-op when the legacy files are absent.
@@ -85,10 +92,61 @@ function sita_xml_importer_ensure_scheduled() {
     }
 }
 
+/**
+ * On multisite, add WebP and AVIF to the network's allowed upload file types.
+ *
+ * The default value of `upload_filetypes` (jpg jpeg png gif) predates core's WebP
+ * (5.8) and AVIF (6.5) support and is almost never a deliberate choice - it simply
+ * never got updated. Feeds serve these formats today, and an editor who wants to
+ * upload one by hand hits the same wall, so widening it is what the site wanted
+ * anyway. Only formats core itself supports are added; nothing else is touched.
+ *
+ * Guarded two ways: it runs only for a super admin (someone who may change network
+ * settings in the first place), and it is filterable off. The importer works either
+ * way - it relaxes the mimes for its own sideloads regardless - so a site where this
+ * does not run loses nothing.
+ */
+function sita_xml_importer_maybe_allow_modern_image_uploads() {
+    if ( ! is_multisite() ) {
+        return;
+    }
+
+    /**
+     * Filter whether activation may add WebP/AVIF to the network's upload_filetypes.
+     *
+     * @param bool $allowed Default true.
+     */
+    if ( ! apply_filters( 'sita_xml_importer_add_network_upload_filetypes', true ) ) {
+        return;
+    }
+
+    // Changing a network-wide option is a super admin's call, not a site admin's.
+    if ( ! function_exists( 'is_super_admin' ) || ! is_super_admin() ) {
+        return;
+    }
+
+    $current = (string) get_site_option( 'upload_filetypes', 'jpg jpeg png gif' );
+    $allowed = array_filter( array_map( 'strtolower', preg_split( '/\s+/', trim( $current ) ) ) );
+    $core    = wp_get_mime_types();
+    $added   = false;
+
+    foreach ( [ 'webp', 'avif' ] as $ext ) {
+        if ( isset( $core[ $ext ] ) && ! in_array( $ext, $allowed, true ) ) {
+            $allowed[] = $ext;
+            $added     = true;
+        }
+    }
+
+    if ( $added ) {
+        update_site_option( 'upload_filetypes', implode( ' ', $allowed ) );
+    }
+}
+
 register_activation_hook( __FILE__, 'sita_xml_importer_activate' );
 function sita_xml_importer_activate() {
     sita_xml_importer_create_tables();
     update_option( 'sita_xml_importer_version', SITA_XML_IMPORTER_VERSION );
+    sita_xml_importer_maybe_allow_modern_image_uploads();
 
     /**
      * Fires on activation after core setup. The removable legacy module hooks

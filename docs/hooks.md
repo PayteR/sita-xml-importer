@@ -34,6 +34,42 @@ add_filter( 'sita_xml_importer_article', function ( $article ) {
 } );
 ```
 
+### Sťahovanie obrázkov
+
+#### `sita_xml_importer_image_accept_header`
+
+Hlavička `Accept`, ktorú plugin posiela pri sťahovaní obrázka. Dostáva `( $accept, $url )`.
+
+WordPress pri `download_url()` neposiela žiadny `Accept`, takže CDN, ktoré vyberá formát obrázka podľa tejto hlavičky, môže na adresu končiacu `.webp` vrátiť JPEG. WordPress potom súbor odmietne, lebo prípona nesedí so skutočným typom, a v zázname sa objaví „Sorry, you are not allowed to upload this file type".
+
+Hlavička sa pridáva len na túto jednu požiadavku, nie globálne. Ide o prevenciu — nezávisle od nej plugin pred uložením ešte porovná skutočný obsah súboru s príponou a v prípade nezhody príponu opraví, takže obrázok sa uloží aj vtedy, keď CDN hlavičku ignoruje alebo keď kanál pošle adresu s nesprávnou príponou.
+
+Vrátením `false` sa hlavička vypne úplne:
+
+```php
+add_filter( 'sita_xml_importer_image_accept_header', '__return_false' );
+```
+
+#### `sita_xml_importer_relax_upload_mimes`
+
+Predvolene `true`. Na multisite sa povolené typy súborov prienikom obmedzujú sieťovou voľbou `upload_filetypes`, ktorej predvolená hodnota (`jpg jpeg png gif`) je staršia než podpora WebP (WordPress 5.8) a AVIF (6.5) v jadre. Plugin preto počas vlastného ukladania obrázka dočasne povolí tie formáty, ktoré jadro aj tak podporuje.
+
+Vypnutie uvoľnenia:
+
+```php
+add_filter( 'sita_xml_importer_relax_upload_mimes', '__return_false' );
+```
+
+#### `sita_xml_importer_add_network_upload_filetypes`
+
+Predvolene `true`. Na multisite plugin pri aktivácii a pri aktualizácii doplní `webp` a `avif` do sieťovej voľby `upload_filetypes`, ak tam chýbajú — aby tieto formáty mohli nahrávať aj redaktori ručne, nielen importér. Pridávajú sa výhradne formáty, ktoré WordPress sám podporuje; nič iné sa nemení.
+
+Zapíše sa to len vtedy, keď plugin aktivuje alebo aktualizuje superadmin, teda niekto s právom meniť sieťové nastavenia. Vypnutie:
+
+```php
+add_filter( 'sita_xml_importer_add_network_upload_filetypes', '__return_false' );
+```
+
 ### Ostatné filtre
 
 | Filter | Popis | Predvolené |
