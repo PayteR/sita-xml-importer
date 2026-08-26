@@ -31,8 +31,8 @@ jobs:
       - name: Parser smoke test
         run: php tests/parser-smoke-test.php
 
-      - name: Image download and upload filetypes tests
-        run: php tests/image-download-test.php && php tests/upload-filetypes-test.php
+      - name: Image sideload tests
+        run: php tests/image-download-test.php && php tests/upload-filetypes-test.php && php tests/filename-mime-test.php
 
   deploy:
     name: Release to WordPress.org
