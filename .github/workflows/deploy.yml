@@ -31,6 +31,9 @@ jobs:
       - name: Parser smoke test
         run: php tests/parser-smoke-test.php
 
+      - name: Image download filter test
+        run: php tests/image-download-test.php
+
   deploy:
     name: Release to WordPress.org
     needs: test
