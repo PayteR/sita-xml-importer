@@ -4,7 +4,7 @@ Tags: sita, xml, importer, news, feed
 Requires at least: 5.9
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.1.6
+Stable tag: 2.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,7 +48,7 @@ Ide o presne ten istý kód, aký používa tento plugin.
 * Nastaviteľný typ príspevku, stav a autor
 * Bez duplicít - článok sa importuje raz a aktualizuje sa len pri zmene v zdroji
 * Spoľahlivý aj na zdieľanom hostingu a pri veľkých kanáloch
-* Hooky pre vývojárov
+* Hooky pre vývojárov a voliteľné príkazy pre WP-CLI
 
 Plugin je nástupcom staršieho pluginu "SITA XML parser správ" (sita-parser-xml). Pri prechode sa nastavenia aj už importované články prenesú automaticky.
 
@@ -88,7 +88,11 @@ https://github.com/PayteR/sita-xml-importer/tree/main/docs
 
 = Ako často import beží? =
 
-Predvolene každých 30 minút, nastaviteľné na 15 minút, 30 minút alebo hodinu. Keďže WordPress cron (WP-Cron) spúšťajú návštevy stránky, reálne načasovanie závisí od návštevnosti. Presné a od návštevnosti nezávislé spúšťanie dosiahnete vypnutím WP-Cronu (`define('DISABLE_WP_CRON', true);`) a spúšťaním cronu zo systému.
+Predvolene každých 30 minút, nastaviteľné na 15 minút, 30 minút alebo hodinu. Keďže WordPress cron (WP-Cron) spúšťajú návštevy stránky, na málo navštevovaných weboch môže import nabehnúť o niečo neskôr, než ukazuje nastavenie. Pre bežnú prevádzku to stačí a nič nastavovať netreba.
+
+= Dá sa import spúšťať aj cez WP-CLI? =
+
+Áno, ak WP-CLI na svojom hostingu máte a chcete import naviazať na systémový cron: `wp sita-xml-importer run` spustí import, `wp sita-xml-importer status` ukáže posledný beh. Je to čisto voliteľné - plugin funguje rovnako dobre bez toho a väčšina webov to nepotrebuje.
 
 = Kde nahlásim chybu alebo technický problém? =
 
@@ -108,7 +112,22 @@ Nastavenia sa prenesú automaticky pri aktivácii a kontrola duplicít funguje o
 2. Záznam importov - výsledok každého behu (vytvorené, aktualizované, preskočené, chyby), tlačidlo "Importovať teraz" a export do CSV.
 3. Údržba - migrácia zo starého pluginu sita-parser-xml a automatické čistenie starých údajov.
 
+== Upgrade Notice ==
+
+= 2.1.7 =
+Voliteľné príkazy pre WP-CLI a doplnené podklady pre prekladateľov. Správanie importu sa nemení, aktualizácia nevyžaduje žiadny zásah.
+
+= 2.1.5 =
+Spracovanie XML kanála je po novom dostupné aj ako samostatná PHP knižnica pre projekty bez WordPressu. Import funguje ako doteraz.
+
+= 2.1.0 =
+Titulné obrázky preberajú popis a fotokredit priamo z kanála SITA, ak ich kanál poskytuje.
+
 == Changelog ==
+
+= 2.1.7 =
+
+Plugin po novom ponúka voliteľné príkazy pre WP-CLI (`wp sita-xml-importer run` a `status`) pre weby, ktoré chcú import naviazať na systémový cron. Nejde o odporúčaný ani potrebný spôsob prevádzky - bežný automatický import aj tlačidlo "Importovať teraz" fungujú nezmenene a nič nastavovať netreba. Doplnená bola aj šablóna prekladov (.pot) o reťazce pridané v predchádzajúcich verziách.
 
 = 2.1.6 =
 

@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the SITA XML Importer plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: SITA XML Importer 2.0.0\n"
+"Project-Id-Version: SITA XML Importer 2.1.7\n"
 "Report-Msgid-Bugs-To: https://sita.sk\n"
-"POT-Creation-Date: 2026-07-09 04:00+0200\n"
+"POT-Creation-Date: 2026-08-26 14:16+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -13,372 +13,338 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: includes/admin.php:45
+#: includes/admin.php:42
 msgid "XML Feed URLs"
 msgstr ""
 
-#: includes/admin.php:47
+#: includes/admin.php:44
 msgid "Enter one XML feed URL per line"
 msgstr ""
 
-#: includes/admin.php:51
+#: includes/admin.php:48
 msgid "Import Frequency"
 msgstr ""
 
-#: includes/admin.php:54
-msgid ""
-"How often to check the feeds. With WP-Cron the actual timing depends on site "
-"traffic; for exact intervals, run WordPress cron from a system cron."
+#: includes/admin.php:51
+msgid "How often to check the feeds. With WP-Cron the actual timing depends on site traffic; for exact intervals, run WordPress cron from a system cron."
 msgstr ""
 
-#: includes/admin.php:56
+#: includes/admin.php:53
 msgid "Every 15 minutes"
 msgstr ""
 
-#: includes/admin.php:57
+#: includes/admin.php:54
 msgid "Every 30 minutes"
 msgstr ""
 
-#: includes/admin.php:58
+#: includes/admin.php:55
 msgid "Hourly"
 msgstr ""
 
-#: includes/admin.php:63
+#: includes/admin.php:60
 msgid "Post Author"
 msgstr ""
 
-#: includes/admin.php:65
+#: includes/admin.php:62
 msgid "Which user should own imported posts?"
 msgstr ""
 
-#: includes/admin.php:70
+#: includes/admin.php:67
 msgid "Post Type"
 msgstr ""
 
-#: includes/admin.php:72
+#: includes/admin.php:69
 msgid "Which post type to use for imported articles?"
 msgstr ""
 
-#: includes/admin.php:78
+#: includes/admin.php:75
 msgid "Post Status"
 msgstr ""
 
-#: includes/admin.php:80
+#: includes/admin.php:77
 msgid "Default status for newly imported posts"
 msgstr ""
 
-#: includes/admin.php:83
+#: includes/admin.php:80
 msgid "Publish"
 msgstr ""
 
-#: includes/admin.php:84
+#: includes/admin.php:81
 msgid "Future"
 msgstr ""
 
-#: includes/admin.php:85
+#: includes/admin.php:82
 msgid "Pending"
 msgstr ""
 
-#: includes/admin.php:90
+#: includes/admin.php:87
 msgid "Category Saving"
 msgstr ""
 
-#: includes/admin.php:92
+#: includes/admin.php:89
 msgid "Save full category tree or just the lowest level?"
 msgstr ""
 
-#: includes/admin.php:94
+#: includes/admin.php:91
 msgid "Lowest category only"
 msgstr ""
 
-#: includes/admin.php:95
+#: includes/admin.php:92
 msgid "Full category tree"
 msgstr ""
 
-#: includes/admin.php:100
+#: includes/admin.php:97
 msgid "Allowed HTML Tags"
 msgstr ""
 
-#: includes/admin.php:103
+#: includes/admin.php:100
 msgid "HTML tags to preserve in imported content (for strip_tags)"
 msgstr ""
 
-#: includes/admin.php:107
+#: includes/admin.php:104
 msgid "Verbose Logging"
 msgstr ""
 
-#: includes/admin.php:109
+#: includes/admin.php:106
 msgid "Store per-article detail (created/updated/skipped) in the run log"
 msgstr ""
 
-#: includes/admin.php:110
-msgid ""
-"Errors are always logged. Verbose mode also stores every processed article "
-"(much more data in the database); enable only for debugging."
+#: includes/admin.php:107
+msgid "Errors are always logged. Verbose mode also stores every processed article (much more data in the database); enable only for debugging."
 msgstr ""
 
-#: includes/admin.php:114
+#: includes/admin.php:111
 msgid "Log Retention (days)"
 msgstr ""
 
-#: includes/admin.php:117
+#: includes/admin.php:114
 msgid "Import log rows older than this are pruned automatically."
 msgstr ""
 
-#: includes/admin.php:247 includes/admin.php:248 includes/admin.php:323
+#: includes/admin.php:244 includes/admin.php:245 includes/admin.php:319
 msgid "SITA XML Importer"
 msgstr ""
 
-#: includes/admin.php:285
+#: includes/admin.php:284
 msgid "Settings"
 msgstr ""
 
-#: includes/admin.php:289 includes/admin.php:464
+#: includes/admin.php:288 includes/admin.php:453
 msgid "Import log"
 msgstr ""
 
-#: includes/admin.php:293
+#: includes/admin.php:292
 msgid "Maintenance"
 msgstr ""
 
-#: includes/admin.php:390
+#: includes/admin.php:379
 msgid "Featured image repair"
 msgstr ""
 
-#: includes/admin.php:391
-msgid ""
-"Missing featured images are re-downloaded automatically after every import, "
-"using the image address stored with each article. This also fixes articles "
-"that have already scrolled out of the feed, so there is nothing to click "
-"here - the count below is for information only."
+#: includes/admin.php:380
+msgid "Missing featured images are re-downloaded automatically after every import, using the image address stored with each article. This also fixes articles that have already scrolled out of the feed, so there is nothing to click here - the count below is for information only."
 msgstr ""
 
-#: includes/admin.php:396
-#, php-format
+#: includes/admin.php:385
 msgid "Articles missing their featured image: %s."
 msgstr ""
 
-#: includes/admin.php:409
+#: includes/admin.php:398
 msgid "Import started in the background. The result appears in the log below."
 msgstr ""
 
-#: includes/admin.php:410
+#: includes/admin.php:399
 msgid "Import finished. See the log below."
 msgstr ""
 
-#: includes/admin.php:411
+#: includes/admin.php:400
 msgid "Please wait - an import was triggered recently (cooldown active)."
 msgstr ""
 
-#: includes/admin.php:412
+#: includes/admin.php:401
 msgid "An import is already running."
 msgstr ""
 
-#: includes/admin.php:435 includes/admin.php:447
+#: includes/admin.php:424 includes/admin.php:436
 msgid "Import now"
 msgstr ""
 
-#: includes/admin.php:436
-msgid ""
-"Runs the importer immediately in the background (it does not block this "
-"page). Watch the status and the log below."
+#: includes/admin.php:425
+msgid "Runs the importer immediately in the background (it does not block this page). Watch the status and the log below."
 msgstr ""
 
-#: includes/admin.php:441
+#: includes/admin.php:430
 msgid "Overwrite existing articles"
 msgstr ""
 
-#: includes/admin.php:442
-msgid ""
-"Re-imports every article currently in the feed even if it has not changed - "
-"overwriting the title, content, excerpt and categories, and re-downloading a "
-"missing featured image. The publish date, author and status are kept. Use "
-"this to fix articles whose images did not download or that need refreshing "
-"from the source."
+#: includes/admin.php:431
+msgid "Re-imports every article currently in the feed even if it has not changed - overwriting the title, content, excerpt and categories, and re-downloading a missing featured image. The publish date, author and status are kept. Use this to fix articles whose images did not download or that need refreshing from the source."
 msgstr ""
 
-#: includes/admin.php:453 includes/admin.php:617
+#: includes/admin.php:442 includes/admin.php:630
 msgid "Status: import running…"
 msgstr ""
 
-#: includes/admin.php:454 includes/admin.php:616
+#: includes/admin.php:443 includes/admin.php:629
 msgid "Status: idle"
 msgstr ""
 
-#: includes/admin.php:467
+#: includes/admin.php:456
 msgid "No import runs recorded yet."
 msgstr ""
 
-#: includes/admin.php:473
+#: includes/admin.php:462
 msgid "Started"
 msgstr ""
 
-#: includes/admin.php:474
+#: includes/admin.php:463
 msgid "Type"
 msgstr ""
 
-#: includes/admin.php:475
+#: includes/admin.php:464
 msgid "Status"
 msgstr ""
 
-#: includes/admin.php:476
+#: includes/admin.php:465
 msgid "Created"
 msgstr ""
 
-#: includes/admin.php:477
+#: includes/admin.php:466
 msgid "Updated"
 msgstr ""
 
-#: includes/admin.php:478
+#: includes/admin.php:467
 msgid "Skipped"
 msgstr ""
 
-#: includes/admin.php:479 includes/admin.php:503
+#: includes/admin.php:468 includes/admin.php:492
 msgid "Errors"
 msgstr ""
 
-#: includes/admin.php:480
+#: includes/admin.php:469
 msgid "Details"
 msgstr ""
 
-#: includes/admin.php:501
+#: includes/admin.php:490
 msgid "view"
 msgstr ""
 
-#: includes/admin.php:510
+#: includes/admin.php:499
 msgid "Articles"
 msgstr ""
 
-#: includes/admin.php:545
+#: includes/admin.php:534
 msgid "First page"
 msgstr ""
 
-#: includes/admin.php:550
+#: includes/admin.php:539
 msgid "Previous page"
 msgstr ""
 
-#: includes/admin.php:558
-#, php-format
+#: includes/admin.php:547
 msgid "%1$s of %2$s"
 msgstr ""
 
-#: includes/admin.php:571
+#: includes/admin.php:560
 msgid "Next page"
 msgstr ""
 
-#: includes/admin.php:576
+#: includes/admin.php:565
 msgid "Last page"
 msgstr ""
 
-#: includes/admin.php:585
+#: includes/admin.php:574
 msgid "Export & diagnostics"
 msgstr ""
 
-#: includes/admin.php:588
+#: includes/admin.php:577
 msgid "Export runs in a date range as CSV - opens in a spreadsheet."
 msgstr ""
 
-#: includes/admin.php:592
+#: includes/admin.php:581
 msgid "From"
 msgstr ""
 
-#: includes/admin.php:593
+#: includes/admin.php:582
 msgid "To"
 msgstr ""
 
-#: includes/admin.php:594
+#: includes/admin.php:583
 msgid "Export CSV"
 msgstr ""
 
-#: includes/admin.php:598
-msgid ""
-"Download a Markdown diagnostic report: environment, database, schema, health "
-"checks and recent errors. Ideal for sending to a developer or a coding agent."
+#: includes/admin.php:587
+msgid "Download a Markdown diagnostic report: environment, database, schema, health checks and recent errors. Ideal for sending to a developer or a coding agent."
 msgstr ""
 
-#: includes/admin.php:602
+#: includes/admin.php:591
 msgid "Export diagnostic report (.md)"
 msgstr ""
 
-#: includes/admin.php:618
-msgid ""
-"Import was queued but has not started - this site's background tasks (WP-"
-"Cron) may be blocked. Run it via WP-CLI or set up a real system cron."
+#: includes/admin.php:631
+msgid "Import was queued but has not started - this site's background tasks (WP-Cron) may be blocked. Run it via WP-CLI or set up a real system cron."
 msgstr ""
 
-#: includes/admin.php:662
-#, php-format
+#: includes/admin.php:632
 msgid "Available in %s"
 msgstr ""
 
-#: includes/admin.php:694 includes/admin.php:744 includes/diagnostics.php:217
-#: includes/legacy-migration.php:485 includes/legacy-migration.php:499
+#: includes/admin.php:645 includes/admin.php:692 includes/diagnostics.php:214 includes/legacy-migration.php:501 includes/legacy-migration.php:515
 msgid "Insufficient permissions."
 msgstr ""
 
-#: includes/legacy-migration.php:391
+#: includes/legacy-migration.php:407
 msgid "Data migration started in the background."
 msgstr ""
 
-#: includes/legacy-migration.php:392
+#: includes/legacy-migration.php:408
 msgid "Legacy meta cleanup ran. Repeat until nothing remains."
 msgstr ""
 
-#: includes/legacy-migration.php:425
+#: includes/legacy-migration.php:441
 msgid "Legacy data migration"
 msgstr ""
 
-#: includes/legacy-migration.php:426
-msgid ""
-"Moves the old per-post tracking meta (_w_id, _w_t_p, _w_t_m) into the "
-"indexed article table. New imports already use the table; this backfills "
-"existing posts."
+#: includes/legacy-migration.php:442
+msgid "Moves the old per-post tracking meta (_w_id, _w_t_p, _w_t_m) into the indexed article table. New imports already use the table; this backfills existing posts."
 msgstr ""
 
-#: includes/legacy-migration.php:431
-#, php-format
+#: includes/legacy-migration.php:447
 msgid "Posts not yet migrated: %1$s. Legacy meta rows remaining: %2$s."
 msgstr ""
 
-#: includes/legacy-migration.php:444
-#, php-format
-msgid ""
-"The remaining legacy meta is kept as a backup and is deleted automatically "
-"around %s. You can also remove it now."
+#: includes/legacy-migration.php:460
+msgid "The remaining legacy meta is kept as a backup and is deleted automatically around %s. You can also remove it now."
 msgstr ""
 
-#: includes/legacy-migration.php:448
-msgid ""
-"Automatic cleanup is disabled; remove the legacy meta manually when ready."
+#: includes/legacy-migration.php:464
+msgid "Automatic cleanup is disabled; remove the legacy meta manually when ready."
 msgstr ""
 
-#: includes/legacy-migration.php:455
+#: includes/legacy-migration.php:471
 msgid "Run data migration now"
 msgstr ""
 
-#: includes/legacy-migration.php:458
+#: includes/legacy-migration.php:474
 msgid "Delete legacy _w_* postmeta for migrated posts? This cannot be undone."
 msgstr ""
 
-#: includes/legacy-migration.php:462
+#: includes/legacy-migration.php:478
 msgid "Delete legacy meta (cleanup)"
 msgstr ""
 
-#: includes/legacy-migration.php:477
-msgid ""
-"The old \"SITA XML parser\" plugin (sita-parser-xml) is still installed. It "
-"has been deactivated and is no longer needed. You can safely delete it from "
-"the Plugins screen."
+#: includes/legacy-migration.php:493
+msgid "The old \"SITA XML parser\" plugin (sita-parser-xml) is still installed. It has been deactivated and is no longer needed. You can safely delete it from the Plugins screen."
 msgstr ""
 
-#: includes/legacy-migration.php:478
+#: includes/legacy-migration.php:494
 msgid "Go to Plugins"
 msgstr ""
 
-#: sita-xml-importer.php:143
+#: sita-xml-importer.php:136
 msgid "Every 15 minutes (SITA XML Importer)"
 msgstr ""
 
-#: sita-xml-importer.php:144
+#: sita-xml-importer.php:137
 msgid "Every 30 minutes (SITA XML Importer)"
 msgstr ""
