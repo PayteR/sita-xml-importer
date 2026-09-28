@@ -5,7 +5,8 @@
 # Honoured by the 10up "WordPress Plugin Deploy" GitHub Action and compatible
 # packaging tools.
 
-# Claude Code / AI tooling
+# AI agent tooling (Claude Code, OpenAI Codex)
+AGENTS.md
 CLAUDE.md
 
 # Version control

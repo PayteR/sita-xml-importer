@@ -15,6 +15,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Must always equal the Version header above: it drives the in-place upgrade
+// routine, and the release pipeline refuses to publish when the two differ.
 define( 'SITA_XML_IMPORTER_VERSION', '2.1.8' );
 define( 'SITA_XML_IMPORTER_DB_VERSION', '2.0.0' );
 define( 'SITA_XML_IMPORTER_DB_VERSION_OPT', 'sita_xml_importer_db_version' );
@@ -31,9 +33,11 @@ require_once SITA_XML_IMPORTER_PATH . 'includes/functions.php';
 require_once SITA_XML_IMPORTER_PATH . 'includes/db.php';
 require_once SITA_XML_IMPORTER_PATH . 'includes/logger.php';
 
-// Removable legacy modules - loaded only if present, so either file can be
-// deleted (or omitted from the public build) once its job is done, with no code
-// changes anywhere else. They attach to the core via filters/actions only.
+// Legacy modules - they DO ship: they are the upgrade path from the previous
+// plugin generation (data migration + old hook/function names). Loaded only if
+// present, so either file can be deleted in a future release with no code
+// changes anywhere else. They attach to the core via filters/actions only; no
+// core file may call a function defined only in a legacy file.
 foreach ( [ 'legacy-migration.php', 'legacy-compat.php' ] as $sita_xml_importer_legacy_file ) {
     $sita_xml_importer_legacy_path = SITA_XML_IMPORTER_PATH . 'includes/' . $sita_xml_importer_legacy_file;
     if ( file_exists( $sita_xml_importer_legacy_path ) ) {

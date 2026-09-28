@@ -102,7 +102,8 @@ function sita_xml_importer_release_lock() {
 
 /**
  * Timestamp-based so a stale lock self-clears after the TTL even where the object
- * cache does not honour transient expiry.
+ * cache does not honour transient expiry. This is the single source of truth for
+ * "an import is running": the admin status reads it, not the log row status.
  */
 function sita_xml_importer_is_running() {
     $since = (int) get_transient( 'sita_xml_importer_lock' );
